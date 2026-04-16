@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ partial "head.html" . }}
+    <title>{{ .Site.Title }}</title>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: var(--text-color);
+        }
+        .quarter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .quarter-card {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            background: var(--card-bg);
+        }
+        .quarter-card h2 {
+            margin-top: 0;
+            color: var(--link-color);
+        }
+        .quarter-card a {
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        .quarter-card a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {{ partial "theme-toggle.html" . }}
+    <h1>📊 {{ .Site.Title }}</h1>
+    <p>{{ .Site.Params.description }}</p>
+
+    <div class="quarter-grid">
+        {{ range (readDir "content/accomplishments") }}
+            {{ if .IsDir }}
+                {{ $year := .Name }}
+                <div class="quarter-card">
+                    <h2>Year {{ .Name }}</h2>
+                    <ul>
+                        {{ range (readDir (printf "content/accomplishments/%s" $year)) }}
+                            {{ if .IsDir }}
+                                <li><a href="/accomplishments/{{ $year }}/{{ .Name }}/">{{ upper .Name }}</a></li>
+                            {{ end }}
+                        {{ end }}
+                    </ul>
+                </div>
+            {{ end }}
+        {{ end }}
+    </div>
+</body>
+</html>

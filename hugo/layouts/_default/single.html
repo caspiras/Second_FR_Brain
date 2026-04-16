@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ partial "head.html" . }}
+    <title>{{ .Title }} - {{ .Site.Title }}</title>
+    <style>
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: var(--text-color);
+        }
+        .meta {
+            color: var(--meta-color);
+            margin-bottom: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {{ partial "theme-toggle.html" . }}
+    <a href="/" class="back-link">← Back to Home</a>
+    <h1>{{ .Title }}</h1>
+    <div class="meta">
+        <strong>Date:</strong> {{ .Date.Format "Monday, January 2, 2006" }}<br>
+        {{ if .Params.quarter }}<strong>Quarter:</strong> {{ .Params.quarter }}{{ end }}
+    </div>
+    <div>{{ .Content }}</div>
+</body>
+</html>

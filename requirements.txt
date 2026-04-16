@@ -1,0 +1,2 @@
+# No external dependencies required for core functionality
+# Hugo must be installed separately: https://gohugo.io/installation/

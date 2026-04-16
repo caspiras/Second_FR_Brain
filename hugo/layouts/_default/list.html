@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{ partial "head.html" . }}
+    <title>{{ .Title }} - {{ .Site.Title }}</title>
+    <style>
+        body {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: var(--text-color);
+        }
+        .accomplishment {
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+            margin-bottom: 20px;
+        }
+        .date {
+            color: var(--meta-color);
+            font-size: 0.9em;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--link-color);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    {{ partial "theme-toggle.html" . }}
+    <a href="/" class="back-link">← Back to Home</a>
+    <h1>{{ .Title }}</h1>
+
+    {{ range .Pages.ByDate.Reverse }}
+        <div class="accomplishment">
+            <div class="date">{{ .Date.Format "Monday, January 2, 2006" }}</div>
+            <h3>{{ .Title }}</h3>
+            <div>{{ .Content }}</div>
+        </div>
+    {{ end }}
+</body>
+</html>
