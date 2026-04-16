@@ -38,18 +38,18 @@ This will show you:
 
 ### Managing Todos
 
-**Add a todo (Air Force EPR format):**
+**Add a todo (bullet formatting):**
 ```bash
 ./journal.py todo add "Led team of 5 to complete project 2 weeks early"
 ```
 
-**Important: EPR Format Requirements**
+**Important: Bullet Format Requirements**
 - Maximum 20 words
 - No semicolons, colons, or dashes
 - Start with action verb (Led, Managed, Developed, etc.)
 - Be concise and impactful
 
-The system will validate your todo and provide helpful feedback if it doesn't meet EPR format.
+The system will validate your todo and provide helpful feedback if it doesn't meet the format requirements.
 
 **List pending todos:**
 ```bash
@@ -98,9 +98,9 @@ Accomplishments are automatically organized by quarter:
 
 Browse by year and quarter in the Hugo web interface!
 
-## EPR Writing Guide
+## Bullet Writing Guide
 
-Need help writing in Air Force EPR format? Check out **EPR_GUIDE.md** for:
+Need help writing effective bullet points? Check out **EPR_GUIDE.md** for:
 - Detailed formatting rules
 - Strong action verbs to use
 - Examples by category (development, project management, etc.)
@@ -143,4 +143,24 @@ The system is fully date-aware:
 - You can view accomplishments for specific dates (today, yesterday, this week)
 - Quarter assignment is based on when you **completed** the todo, not when you created it
 - If you forget to close out your day, accomplishments from previous days remain accurately dated
+
+## Conversational Trigger Words (Claude Code)
+
+When using this system with Claude Code, you can use natural language commands:
+
+### Morning Routine
+Trigger words: `morning`, `good morning`, `hello`, `hi`, `greet`, `start the day`
+
+### Todo Management
+- **Add**: "add todo [description]"
+- **View**: "show todos", "list todos", "what are my todos"
+- **Complete**: "complete [todo-id or description]", "mark [todo] done"
+- **Delete**: "delete [todo-id]", "remove [todo]"
+
+### Accomplishment Management
+- **Log directly**: "log accomplishment [description]", "add accomplishment [description]"
+- **View today**: "show today", "today's accomplishments"
+- **View yesterday**: "show yesterday", "yesterday's accomplishments"
+- **View week**: "show this week", "this week's accomplishments"
+- **View quarter**: "show Q1", "show Q2", "show Q3", "show Q4"
 
