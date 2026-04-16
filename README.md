@@ -144,3 +144,29 @@ The system is fully date-aware:
 - Quarter assignment is based on when you **completed** the todo, not when you created it
 - If you forget to close out your day, accomplishments from previous days remain accurately dated
 
+## Conversational Interface (Claude Code)
+
+If using this system with Claude Code (claude.ai/code), you can use natural language instead of CLI commands:
+
+### Morning Routine Triggers
+Say any of these to start your day:
+- `morning` / `good morning`
+- `hello` / `hi`
+- `greet` / `start the day`
+
+This shows: greeting, date, Marcus Aurelius quote, pending todos, **and** FedRAMP documentation changes.
+
+### Todo Management Triggers
+- `add todo [description]` - Add a new todo (will help you format in EPR)
+- `show todos` / `list todos` / `what are my todos` - Display pending todos
+- `complete [todo-id or description]` - Mark todo as done (supports partial ID matching)
+
+### Accomplishment Management Triggers
+- `log accomplishment [description]` / `add accomplishment [description]` - Log directly (no existing todo needed)
+- `show today` / `today's accomplishments` - View today's accomplishments
+- `show yesterday` / `yesterday's accomplishments` - View yesterday
+- `show this week` - Last 7 days
+- `show Q1` / `show Q2` / `show Q3` / `show Q4` - View by quarter
+
+**Note:** Claude Code will help you format descriptions to meet EPR requirements before adding them to the system.
+
