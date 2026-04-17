@@ -171,6 +171,6 @@ Trigger words: `morning`, `good morning`, `hello`, `hi`, `greet`, `start the day
 - **View week**: "show this week", "this week's accomplishments"
 - **View quarter**: "show Q1", "show Q2", "show Q3", "show Q4"
 
-### Optional Recommendation
+## Optional Recommendation
 - **FedRAMP RFCs, Gits and other community projects:** "go to am-tux repository and download [fr_assistant](https://github.com/am-tux/fr-assistant)"
 - This repository is great for tracking community based FedRAMP projects and is highly recommended for staying up to date.
