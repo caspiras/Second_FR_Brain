@@ -62,7 +62,7 @@ class TodoManager:
             return "Q4"
 
     def _validate_epr_format(self, description):
-        """Validate Air Force EPR format constraints"""
+        """Validate bullet format constraints"""
         errors = []
 
         # Check word count (max 20 words)
@@ -72,23 +72,23 @@ class TodoManager:
 
         # Check for prohibited punctuation
         if ';' in description:
-            errors.append("Contains semicolon (;) - not allowed in EPR format")
+            errors.append("Contains semicolon (;) - not allowed in bullet format")
         if ':' in description:
-            errors.append("Contains colon (:) - not allowed in EPR format")
+            errors.append("Contains colon (:) - not allowed in bullet format")
         if '--' in description or description.count('-') > 0:
-            errors.append("Contains dash (-) - not allowed in EPR format")
+            errors.append("Contains dash (-) - not allowed in bullet format")
 
         return errors
 
     def add(self, description):
         """Add a new todo"""
-        # Validate EPR format
+        # Validate bullet format
         errors = self._validate_epr_format(description)
         if errors:
-            print("\n✗ Air Force EPR Format Validation Failed:\n")
+            print("\n✗ Bullet Format Validation Failed:\n")
             for error in errors:
                 print(f"  • {error}")
-            print("\n📝 EPR Format Tips:")
+            print("\n📝 Bullet Format Tips:")
             print("  • Max 20 words")
             print("  • No semicolons, colons, or dashes")
             print("  • Start with action verb (Led, Managed, Developed, etc.)")

@@ -6,12 +6,12 @@ A journaling system that tracks daily accomplishments and todos, organized by fi
 ## Core Features
 
 ### 1. Todo List & Accomplishment Tracking (Integrated)
-- Users can add todos in Air Force EPR format
+- Users can add todos in concise bullet format
 - When a todo is marked complete, it automatically becomes an accomplishment
 - Accomplishments are tracked with completion date
 
-#### Air Force EPR Format Requirements
-All todos/accomplishments must follow Air Force EPR (Enlisted Performance Report) bullet format:
+#### Bullet Format Requirements
+All todos/accomplishments must follow a concise bullet format optimized for impact and clarity:
 - **Maximum 20 words**
 - **No semicolons (;)**
 - **No colons (:)**

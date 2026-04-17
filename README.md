@@ -18,6 +18,13 @@ A todo list and accomplishment tracking system with quarterly organization, powe
 
 1. Clone or navigate to this directory
 2. Ensure Hugo is installed: `hugo version`
+3. **First-time setup**: Copy the template data files
+   ```bash
+   cp data/todos.json.example data/todos.json
+   cp data/accomplishments.json.example data/accomplishments.json
+   ```
+
+**Note:** The `data/todos.json` and `data/accomplishments.json` files are gitignored to keep your personal data private. Template files are provided for new installations.
 
 ## Usage
 
@@ -100,7 +107,7 @@ Browse by year and quarter in the Hugo web interface!
 
 ## Bullet Writing Guide
 
-Need help writing effective bullet points? Check out **EPR_GUIDE.md** for:
+Need help writing effective bullet points? Check out **BULLET_GUIDE.md** for:
 - Detailed formatting rules
 - Strong action verbs to use
 - Examples by category (development, project management, etc.)

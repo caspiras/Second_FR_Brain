@@ -1,9 +1,8 @@
 # Personal data - keep structure but ignore actual entries
-# These files are tracked with empty templates
-# Uncomment these lines if you want to prevent committing personal data:
-# data/todos.json
-# data/accomplishments.json
-# hugo/content/accomplishments/
+# Template files (.example) are tracked, real data files are ignored
+data/todos.json
+data/accomplishments.json
+hugo/content/accomplishments/
 
 # FedRAMP snapshots - contains personal/sensitive data
 fedramp/snapshots/

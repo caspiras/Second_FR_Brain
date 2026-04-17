@@ -22,8 +22,8 @@
 - [x] View week's accomplishments (terminal)
 - [x] View quarter accomplishments (terminal)
 - [x] Handle edge cases (forgot to close out day)
-- [x] Air Force EPR format validation (20 words max, no semicolons/colons/dashes)
-- [x] Helpful EPR format feedback and tips
+- [x] Bullet format validation (20 words max, no semicolons/colons/dashes)
+- [x] Helpful bullet format feedback and tips
 - [x] Word count display when adding todos
 
 ## 🔄 Future Enhancements

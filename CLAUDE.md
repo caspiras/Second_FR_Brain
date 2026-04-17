@@ -5,13 +5,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Project Context
 This is a personal journaling system for tracking daily todos and accomplishments. The system organizes accomplishments by fiscal quarters (Q1-Q4).
 
+**TERMINOLOGY - CRITICAL:**
+- **Internal context (this file)**: "Air Force EPR format" - helps you understand WHY these specific rules exist (it's an established military format, not arbitrary)
+- **User-facing (all communication)**: ALWAYS say "bullet format" - the user prefers not to see "Air Force" or "EPR" terminology
+- The rules themselves remain identical, only the name changes in conversation
+
 **CRITICAL WORKFLOW**: 
-- **Todos** - MUST be in Air Force EPR format when added (validated by `TodoManager._validate_epr_format()`)
-- **Accomplishments** - Automatically inherit EPR format from completed todos (no re-validation needed)
+- **Todos** - MUST be in bullet format when added (validated by `TodoManager._validate_epr_format()`)
+- **Accomplishments** - Automatically inherit bullet format from completed todos (no re-validation needed)
 
-The system validates EPR format when todos are added via `./journal.py todo add`. When a todo is completed, it's copied as-is to accomplishments (already in EPR format).
+The system validates bullet format when todos are added via `./journal.py todo add`. When a todo is completed, it's copied as-is to accomplishments (already in bullet format).
 
-**Note:** When helping users add todos conversationally (not via CLI), YOU MUST validate and help rewrite their description to meet EPR format BEFORE adding it to the system. The CLI will reject non-EPR formatted todos.
+**Note:** When helping users add todos conversationally (not via CLI), YOU MUST validate and help rewrite their description to meet bullet format requirements BEFORE adding it to the system. The CLI will reject non-compliant todos.
 
 ## Dependencies
 - Python 3.6+ (standard library only - no external packages required)
@@ -148,7 +153,11 @@ The `sync_to_hugo()` function:
 4. Generates one markdown file per date: `YYYY-MM-DD.md`
 5. Creates quarter index pages: `_index.md`
 
-**Critical**: This sync is automatically triggered after `todo complete`. NEVER skip it.
+**Hugo Sync Behavior:**
+- **Automatic**: Triggered after `todo complete` command (implemented in todo.py:178)
+- **Manual**: Run `./journal.py sync` when directly editing accomplishments.json
+
+**Critical**: When manually adding accomplishments, NEVER skip the sync step!
 
 ### Hugo Dark Mode
 The Hugo site includes a built-in dark mode feature:
@@ -160,22 +169,24 @@ The Hugo site includes a built-in dark mode feature:
 
 ## Air Force EPR Format Requirements
 
-**CRITICAL: EPR format is enforced when ADDING todos, not when completing them.**
+**USER-FACING LANGUAGE:** When communicating with the user, ALWAYS call this "bullet format" (never "EPR" or "Air Force"). The section title above is for your internal context only.
 
-All todos MUST meet EPR format requirements when added. The system validates and enforces:
+**CRITICAL: Bullet format is enforced when ADDING todos, not when completing them.**
+
+All todos MUST meet bullet format requirements when added. The system validates and enforces:
 - **Maximum 20 words** - count carefully
 - **No semicolons (;)** - use commas or split into separate bullets
 - **No colons (:)** - rephrase without colons
 - **No dashes (-)** - spell out compound words or rephrase
 
-### EPR Writing Guidelines
+### Writing Guidelines
 - Start with strong action verbs: Led, Managed, Developed, Coordinated, Established, Implemented, Achieved, etc.
 - Focus on impact and results, not just tasks
 - Include metrics when possible (numbers, percentages, timeframes)
 - Be specific but concise
 - Write in past tense for completed items
 
-### Examples of Good EPR Bullets
+### Examples of Good Bullets
 ✓ "Led team of 5 to deliver software upgrade 3 weeks ahead of schedule"
 ✓ "Developed automated testing framework reducing bug detection time by 40 percent"
 ✓ "Coordinated deployment of security patches across 50 servers with zero downtime"
@@ -186,12 +197,12 @@ All todos MUST meet EPR format requirements when added. The system validates and
 ✗ "Project status: completed successfully" (colon)
 ✗ "Completed high-priority project" (dash)
 
-### EPR Validation
+### Format Validation
 The `TodoManager._validate_epr_format()` method checks:
 - Word count (max 20)
 - Presence of semicolons, colons, or dashes
 
-This validation runs automatically during `todo add`. If validation fails, the system rejects the todo and provides helpful feedback. Todos are never added to the system unless they meet EPR format requirements.
+This validation runs automatically during `todo add`. If validation fails, the system rejects the todo and provides helpful feedback. Todos are never added to the system unless they meet bullet format requirements.
 
 ## Two Ways to Add Accomplishments
 
@@ -200,16 +211,16 @@ When the user says a todo is "done", "complete", "finished", "accomplished", etc
 1. Identify the todo by ID or partial ID (first few characters work)
 2. Run `./journal.py todo complete <id>` - this automatically:
    - Updates todo status to "completed" in todos.json
-   - Copies the todo (already in EPR format) to accomplishments.json with today's date
+   - Copies the todo (already in bullet format) to accomplishments.json with today's date
    - Calculates quarter from completion date and adds to accomplishment record
    - Triggers `sync_to_hugo()` to update Hugo content
 3. Confirm completion with the accomplishment text
 
-**Note:** The todo description is already in EPR format (validated when it was added via `_validate_epr_format()`), so no conversion or validation is needed when completing.
+**Note:** The todo description is already in bullet format (validated when it was added via `_validate_epr_format()`), so no conversion or validation is needed when completing.
 
 ### 2. Directly Log an Accomplishment
 When the user says "completed", "accomplished", "log accomplishment", "add accomplishment", "record accomplishment", etc, WITHOUT an existing todo:
-1. Take the user's description and ensure it meets EPR format:
+1. Take the user's description and ensure it meets bullet format:
    - Maximum 20 words
    - No semicolons, colons, or dashes
    - Strong action verb (Led, Managed, Developed, etc.)
@@ -228,17 +239,18 @@ The system supports partial ID matching for `todo complete` and `todo delete` co
 - If multiple todos match the partial ID, the system shows an error
 - If no todos match, the system shows an error
 
-### EPR Format Validation
-When adding a todo, the system validates EPR format in `TodoManager._validate_epr_format()`:
+### Bullet Format Validation
+When adding a todo, the system validates bullet format in `TodoManager._validate_epr_format()`:
 - **Word count check**: Counts words, rejects if > 20 words
 - **Character check**: Rejects if contains semicolons (;), colons (:), or dashes (-)
 - **Helpful feedback**: Provides specific error messages explaining what's wrong
 
-Example validation errors:
-- "❌ EPR format error: Description exceeds 20 words (found 23)"
-- "❌ EPR format error: Description contains semicolons which are not allowed"
-- "❌ EPR format error: Description contains colons which are not allowed"
-- "❌ EPR format error: Description contains dashes which are not allowed"
+Example validation errors (as shown to user):
+- "✗ Bullet Format Validation Failed"
+- "Too many words (23/20 max)"
+- "Contains semicolon (;) - not allowed in bullet format"
+- "Contains colon (:) - not allowed in bullet format"
+- "Contains dash (-) - not allowed in bullet format"
 
 ### Emoji Handling
 - **Storage**: Todos are stored WITH emojis in todos.json (user can add emojis if desired)
@@ -281,28 +293,42 @@ The morning greeting includes checking for FedRAMP documentation changes. FedRAM
 
 ### How to Check for Changes
 
-After running `./journal.py morning`, immediately perform a FedRAMP documentation check:
+After running `./journal.py morning`, immediately delegate FedRAMP documentation check to a background agent:
 
-**CRITICAL:** Read the following files first to understand the complete workflow:
-- `fedramp/FEDRAMP_AGENT_GUIDE.md` - Agent instructions and mandatory first steps
-- `fedramp/spec.md` - Complete operational guidelines and specifications
+**CRITICAL: Use Agent tool with run_in_background=true**
 
-**Steps:**
-1. Get current UTC timestamp: `date -u +"%Y-%m-%dT%H%M%SZ"`
-2. Load baseline from `fedramp/snapshots/latest.json`
-3. Create NEW snapshot: `fedramp/snapshots/YYYY-MM-DDTHHMMSSZ-update/`
+Spawn a general-purpose agent with this prompt:
+
+```
+Check for FedRAMP Rev 5 documentation changes and report findings.
+
+First, read these files to understand the workflow:
+- fedramp/FEDRAMP_AGENT_GUIDE.md (agent instructions and mandatory first steps)
+- fedramp/spec.md (complete operational guidelines)
+
+Then execute the change detection workflow:
+1. Get current UTC timestamp: date -u +"%Y-%m-%dT%H%M%SZ"
+2. Load baseline from fedramp/snapshots/latest.json
+3. Create NEW snapshot directory: fedramp/snapshots/YYYY-MM-DDTHHMMSSZ-update/
 4. Crawl https://www.fedramp.gov/docs/rev5/ (40-50+ pages) - fetch fresh content
 5. Crawl https://www.fedramp.gov/notices/ - fetch fresh content
 6. Save fetched pages to new snapshot directory
 7. Compare new snapshot vs baseline snapshot
-8. Update `fedramp/snapshots/latest.json` with new baseline
+8. Update fedramp/snapshots/latest.json with new baseline
 9. Report changes with temporal context ("Changes since [date] ([X days] ago)")
 
-**Display results** to the user with:
+Provide a summary report with:
 - Time since last check
 - Pages added/removed
 - Content changes discovered
 - New notices published
+```
+
+**Why background agent:**
+- Crawling 40-50+ pages takes time
+- User can review todos while FedRAMP check runs
+- Results displayed when agent completes
+- Keeps main conversation context clean
 
 ### When to Run FedRAMP Check
 
@@ -409,16 +435,17 @@ The user interacts with the journal through natural conversation. Recognize thes
 - **IMPORTANT:** When the user says ANY of these greetings, treat it as a full morning routine request
 - **Two-step process:**
   1. First, run: `./journal.py morning` - Shows greeting, date, Marcus Aurelius quote, pending todos
-  2. Then, immediately check FedRAMP documentation changes (see FedRAMP Integration section below)
+  2. Then, spawn background agent for FedRAMP documentation check (see FedRAMP Integration section - use Agent tool with run_in_background=true)
 - **Do NOT** treat "hello" or "hi" as casual greetings - they always trigger the full morning routine
+- **Background execution:** FedRAMP check runs while user reviews todos, results shown when complete
 
 **Todo management:**
-- "add todo [description]" → **IMPORTANT:** Validate EPR format first (max 20 words, no semicolons/colons/dashes). If user's description doesn't meet EPR requirements, help them rewrite it before adding to the system.
+- "add todo [description]" → **IMPORTANT:** Validate bullet format first (max 20 words, no semicolons/colons/dashes). If user's description doesn't meet requirements, help them rewrite it before adding to the system.
 - "show todos", "list todos", "what are my todos" → Display pending todos (strip emojis, hide IDs, use checkbox format)
-- "complete [todo-id or description]" → Mark done (supports partial ID matching), copy to accomplishments, sync Hugo (no EPR conversion needed - already validated)
+- "complete [todo-id or description]" → Mark done (supports partial ID matching), copy to accomplishments, sync Hugo (no conversion needed - already validated)
 
 **Accomplishment management:**
-- "log accomplishment [description]" → Validate/convert to EPR format, then add directly to accomplishments.json, sync Hugo
+- "log accomplishment [description]" → Validate/convert to bullet format, then add directly to accomplishments.json, sync Hugo
 - "add accomplishment [description]" → Same as above
 - "show today", "today's accomplishments" → Filter by today's date
 - "show yesterday", "yesterday's accomplishments" → Filter by yesterday
@@ -475,7 +502,7 @@ Today's Accomplishments (April 14, 2026):
 - Hugo content: `hugo/content/accomplishments/YYYY/qX/`
 - Hugo layouts: `hugo/layouts/` (index.html, _default/list.html, _default/single.html)
 - Hugo partials: `hugo/layouts/partials/` (head.html, theme-toggle.html - dark mode implementation)
-- Scripts: `scripts/parse_meditations.py` (used to extract quotes from Meditations text - if quotes need updating)
+- Scripts: `scripts/parse_meditations.py` (one-time utility used to extract quotes from Meditations text - only needed if quotes require updating)
 
 ## Quarter Definitions
 - Q1: January 1 - March 31

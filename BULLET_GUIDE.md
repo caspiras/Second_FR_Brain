@@ -1,6 +1,6 @@
-# Air Force EPR Bullet Writing Guide
+# Bullet Writing Guide
 
-All todos and accomplishments in this journal must follow Air Force EPR (Enlisted Performance Report) bullet format.
+All todos and accomplishments in this journal must follow a concise bullet format optimized for impact and clarity.
 
 ## The Rules
 

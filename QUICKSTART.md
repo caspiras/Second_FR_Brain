@@ -16,7 +16,7 @@ Get a nice greeting, wisdom from Marcus Aurelius, and see all your pending todos
 - Inspirational quote from "Meditations" (1,700+ different quotes!)
 - Your pending todos list
 
-## Step 1: Add Some Todos (EPR Format!)
+## Step 1: Add Some Todos (Bullet Format!)
 
 Remember: Max 20 words, no semicolons/colons/dashes, start with action verb!
 
@@ -26,7 +26,7 @@ Remember: Max 20 words, no semicolons/colons/dashes, start with action verb!
 ./journal.py todo add "Updated documentation improving clarity by 40 percent"
 ```
 
-**Not sure about EPR format?** Check **EPR_GUIDE.md** for examples and tips!
+**Not sure about bullet format?** Check **BULLET_GUIDE.md** for examples and tips!
 
 ## Step 2: Complete Todos (They Become Accomplishments!)
 
@@ -72,7 +72,7 @@ Morning:
 # Start your day
 ./journal.py morning
 
-# Add your todos (EPR format!)
+# Add your todos (bullet format!)
 ./journal.py todo add "Authored blog post on microservices architecture for engineering team"
 ./journal.py todo add "Fixed critical authentication bug affecting 500 users"
 ./journal.py todo add "Coordinated client meeting to finalize project requirements and timeline"
