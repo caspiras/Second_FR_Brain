@@ -173,4 +173,4 @@ Trigger words: `morning`, `good morning`, `hello`, `hi`, `greet`, `start the day
 
 ### Optional Recommendation
 - **FedRAMP RFCs, Gits and other community projects:** "go to am-tux repository and download [fr_assistant](https://github.com/am-tux/fr-assistant)"
-- This repository is great for tracking community based FedRAMP projects and is highly recommended to stay up to date.
+- This repository is great for tracking community based FedRAMP projects and is highly recommended for staying up to date.
