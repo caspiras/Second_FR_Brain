@@ -105,7 +105,7 @@ Quarters are calculated from **completion date** (not creation date) in `TodoMan
 - Month 7-9 → Q3
 - Month 10-12 → Q4
 
-### Data Schemas
+### Data Schemas & Key Fields
 
 **todos.json:**
 ```json
@@ -113,7 +113,7 @@ Quarters are calculated from **completion date** (not creation date) in `TodoMan
   "todos": [
     {
       "id": "uuid-string",
-      "description": "Task description (EPR format)",
+      "description": "Task description (bullet format)",
       "created_date": "2026-04-14",
       "completed_date": null,
       "status": "pending"
@@ -128,7 +128,7 @@ Quarters are calculated from **completion date** (not creation date) in `TodoMan
   "accomplishments": [
     {
       "id": "uuid-string",
-      "description": "Completed task description (EPR format)",
+      "description": "Completed task description (bullet format)",
       "created_date": "2026-04-14",
       "completed_date": "2026-04-15",
       "quarter": "Q2",
@@ -140,10 +140,10 @@ Quarters are calculated from **completion date** (not creation date) in `TodoMan
 
 **Key Fields:**
 - `id`: UUID generated when todo is created
-- `description`: Always in EPR format (validated at creation time)
+- `description`: Always in bullet format (validated at creation time)
 - `status`: "pending" or "completed"
 - `completed_date`: Set when todo is completed, used for quarter calculation
-- `quarter` and `year`: Automatically calculated from completion_date
+- `quarter` and `year`: Automatically calculated from completion_date (Q1: Jan-Mar, Q2: Apr-Jun, Q3: Jul-Sep, Q4: Oct-Dec)
 
 ### Hugo Sync Mechanism
 The `sync_to_hugo()` function:
@@ -289,46 +289,7 @@ When a user asks about accomplishments:
 
 ## FedRAMP Integration
 
-The morning greeting includes checking for FedRAMP documentation changes. FedRAMP monitoring data is stored locally in the `fedramp/` directory of this project.
-
-### How to Check for Changes
-
-After running `./journal.py morning`, immediately delegate FedRAMP documentation check to a background agent:
-
-**CRITICAL: Use Agent tool with run_in_background=true**
-
-Spawn a general-purpose agent with this prompt:
-
-```
-Check for FedRAMP Rev 5 documentation changes and report findings.
-
-First, read these files to understand the workflow:
-- fedramp/FEDRAMP_AGENT_GUIDE.md (agent instructions and mandatory first steps)
-- fedramp/spec.md (complete operational guidelines)
-
-Then execute the change detection workflow:
-1. Get current UTC timestamp: date -u +"%Y-%m-%dT%H%M%SZ"
-2. Load baseline from fedramp/snapshots/latest.json
-3. Create NEW snapshot directory: fedramp/snapshots/YYYY-MM-DDTHHMMSSZ-update/
-4. Crawl https://www.fedramp.gov/docs/rev5/ (40-50+ pages) - fetch fresh content
-5. Crawl https://www.fedramp.gov/notices/ - fetch fresh content
-6. Save fetched pages to new snapshot directory
-7. Compare new snapshot vs baseline snapshot
-8. Update fedramp/snapshots/latest.json with new baseline
-9. Report changes with temporal context ("Changes since [date] ([X days] ago)")
-
-Provide a summary report with:
-- Time since last check
-- Pages added/removed
-- Content changes discovered
-- New notices published
-```
-
-**Why background agent:**
-- Crawling 40-50+ pages takes time
-- User can review todos while FedRAMP check runs
-- Results displayed when agent completes
-- Keeps main conversation context clean
+The morning greeting includes checking for FedRAMP Rev 5 documentation changes. FedRAMP monitoring data is stored locally in the `fedramp/` directory.
 
 ### When to Run FedRAMP Check
 
@@ -340,11 +301,28 @@ Provide a summary report with:
 - Runs specific commands like `./journal.py todo list`
 - Is in the middle of another conversation without greeting
 
+### How to Check for Changes
+
+After running `./journal.py morning`, immediately delegate FedRAMP documentation check to a **background agent** (use `Agent` tool with `run_in_background=true`):
+
+```
+Check for FedRAMP Rev 5 documentation changes and report findings.
+
+Read these files for complete workflow instructions:
+- fedramp/FEDRAMP_AGENT_GUIDE.md (agent instructions and mandatory first steps)
+- fedramp/spec.md (complete operational guidelines)
+
+Execute the change detection workflow as specified in those files.
+Report: time since last check, pages added/removed, content changes, new notices.
+```
+
+**Why background execution:** Crawling 40-50+ pages takes time; user can review todos while check runs.
+
 ## On-Demand FedRAMP Documentation Queries
 
 **IMPORTANT: This is separate from the morning routine change detection.**
 
-The user is a product security engineer who frequently needs to reference FedRAMP Rev 5 guidelines and policies. When the user asks questions about FedRAMP material, search the local snapshots in `fedramp/snapshots/` to provide accurate answers.
+The user is a product security engineer who frequently needs to reference FedRAMP Rev 5 guidelines and policies.
 
 ### When to Trigger
 
@@ -352,80 +330,32 @@ Only when the user explicitly asks FedRAMP-related questions:
 - "What does FedRAMP Rev 5 say about [topic]?"
 - "Show me the Rev 5 guidance on [topic]"
 - "What are the FedRAMP requirements for [topic]?"
-- "FedRAMP [specific question]"
 
 ### How to Query
 
 1. Load `fedramp/snapshots/latest.json` to find the current baseline directory
-2. Read the baseline directory from the `baseline_directory` field
-3. Search through the cached HTML files in `fedramp/snapshots/[baseline_directory]/`
-   - **EXCLUDE RFC pages** - Do NOT search or return results from RFC (Request for Comments) pages
-   - Focus ONLY on FedRAMP Rev 5 policy and guidance pages (fedramp.gov/docs/rev5/)
-   - Skip any pages that are RFC specifications or technical standards references
-4. If needed, fetch specific pages fresh from fedramp.gov for latest content
+2. Search through cached HTML files in `fedramp/snapshots/[baseline_directory]/`
+   - **EXCLUDE RFC pages** - Only return FedRAMP Rev 5 policy/guidance pages
+3. If needed, fetch fresh content from fedramp.gov
 
-### Required Search Result Format
+### Search Result Format Requirements
 
-When returning FedRAMP search results, ALWAYS display each metadata field on its own line with a blank line between each field, bold label, and value on the same line. NEVER wrap multiple fields onto one line.
+Display each metadata field on its own line (bold label, value on same line, blank line between fields):
 
-Field definitions:
-- **Section** = the major heading on the page (e.g., "Four-Step Implementation Process")
-- **Header** = the specific sub-heading where the content lives (e.g., "Step 1: Develop Charter"). If multiple sub-headings fall under one Section, list the first as the Header value and include the remaining ones in parentheses after it.
+- **Parent Page:** [page name]
+- **Child Page:** [page name]
+- **Section:** [major heading]
+- **Header:** [sub-heading] (additional sub-headings in parentheses if applicable)
+- **Severity:** [High/Moderate/Low/All Three]
+- **Key Details:** [brief summary]
+- **Content:** [full requirement text]
+  - If Severity is "All Three" with DIFFERENT requirements per level, break out explicitly:
+    - High Impact — [requirement]
+    - Moderate Impact — [requirement]
+    - Low Impact — [requirement]
+  - If SAME requirement for all levels, keep as single block
 
-**Content field rules:**
-- If **Severity** is "All Three" but the policy specifies DIFFERENT requirements per impact level, break out the Content by impact level explicitly:
-  - High Impact — [requirement]
-  - Moderate Impact — [requirement]
-  - Low Impact — [requirement]
-- If the policy says the SAME thing for all three impact levels, keep Content as a single block without breaking it out.
-
-**Example 1 (named header/ID, severity-specific content):**
-
-**Parent Page:** Balance Improvement Releases
-
-**Child Page:** FedRAMP Security Inbox
-
-**Section:** FedRAMP's Responsibilities
-
-**Header:** FSI-FRP-ERT
-
-**Severity:** All Three
-
-**Key Details:** Default timeframes for Emergency and Emergency Test messages vary by impact level
-
-**Content:**
-
-High Impact — within 12 hours
-
-Moderate Impact — by 3:00 p.m. Eastern Time on the 2nd business day
-
-Low Impact — by 3:00 p.m. Eastern Time on the 3rd business day
-
----
-
-**Example 2 (multiple sub-headings under one section, same content for all levels):**
-
-**Parent Page:** Cloud Service Providers
-
-**Child Page:** Continuous Monitoring — Collaborative ConMon
-
-**Section:** Four-Step Implementation Process
-
-**Header:** Step 1: Develop Collaborative ConMon Draft Charter (Step 2: Hold Inaugural Meeting, Step 3: Finalize Charter, Step 4: Hold Monthly Recurring Meetings)
-
-**Severity:** All Three
-
-**Key Details:** Charter must achieve consensus before being finalized
-
-**Content:** [Full policy text describing the requirement — same for all impact levels]
-
-### Important Notes
-
-- This query feature is **NOT part of the morning routine**
-- Only triggered when user explicitly requests FedRAMP information
-- Search local snapshots in `fedramp/snapshots/` directory first
-- **EXCLUDE RFC pages** - Only return FedRAMP Rev 5 guidance/policy pages, NOT RFC specifications
-- Always extract and display severity levels when present in the documentation
+**Note:** Complete formatting examples are in `fedramp/spec.md`
 
 ## Conversational Commands (Cursor Interface)
 The user interacts with the journal through natural conversation. Recognize these intents:
@@ -504,8 +434,20 @@ Today's Accomplishments (April 14, 2026):
 - Hugo partials: `hugo/layouts/partials/` (head.html, theme-toggle.html - dark mode implementation)
 - Scripts: `scripts/parse_meditations.py` (one-time utility used to extract quotes from Meditations text - only needed if quotes require updating)
 
-## Quarter Definitions
-- Q1: January 1 - March 31
-- Q2: April 1 - June 30
-- Q3: July 1 - September 30
-- Q4: October 1 - December 31
+## Git Workflow
+
+This repository is used for personal journaling with GitHub as a remote backup.
+
+**Committing Changes:**
+- Commit after adding new features or fixing bugs
+- Use descriptive commit messages in present tense (e.g., "Add FedRAMP change detection", "Fix bullet format validation")
+- Group related changes together in a single commit
+
+**Pushing to GitHub:**
+- Push regularly to keep GitHub backup up to date
+- Command: `git push origin main`
+- Safe to push anytime - this is a personal repository
+
+**Privacy Note:**
+- `data/todos.json` and `data/accomplishments.json` are gitignored (personal data stays local)
+- Only code, configuration, and documentation are version controlled
