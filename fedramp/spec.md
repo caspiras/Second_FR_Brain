@@ -180,33 +180,38 @@ https://www.fedramp.gov/docs/rev5/playbook/agency/authorization/
 
 ### Step 3: Extract and Save Page Content
 
-**For each page, create a markdown summary file:**
+**🚨 CRITICAL UPDATE (April 2026): FULL CONTENT CAPTURE**
 
-**Content to Extract:**
-1. Primary heading (H1 or page title)
-2. First paragraph or overview section
-3. Major section headings (H2, H3)
-4. Key bullet points or numbered lists
-5. Important links or references
-6. Any tables with critical data
+**For each page, save the COMPLETE markdown content:**
 
-**Markdown Format:**
-```markdown
-# [Page Title]
+**IMPORTANT:** This is NOT a summary - save EVERY word, EVERY paragraph, ALL content from the page.
 
-## Overview
-[First paragraph describing the page purpose]
-
-## [Major Section 1]
-- Key point 1
-- Key point 2
-
-## [Major Section 2]
-[Important content summary]
-
-## Links and References
-- [Link text](URL)
+**WebFetch Prompt to Use:**
 ```
+"Extract all content from the main documentation area as markdown"
+```
+
+**Content to Save:**
+- **EVERYTHING** - complete page content as markdown
+- All headings (H1, H2, H3, H4, etc.)
+- All paragraphs (every word, every sentence)
+- All bullet points and numbered lists (complete, not selective)
+- All tables (full content)
+- All links and references (inline with context)
+- All code blocks and examples
+- All callouts, warnings, and notices
+- **Every detail** - nothing should be summarized or omitted
+
+**Why Full Content:**
+- Ensures ALL wording changes are detected (e.g., "shall" → "must")
+- Catches minor text edits and subtle modifications
+- Detects content additions/deletions at paragraph level
+- No changes missed due to summarization
+
+**File Format:**
+- Files are named `.html` but contain FULL markdown text
+- Complete markdown output from WebFetch (not HTML)
+- This ensures consistent, text-based comparison between snapshots
 
 **File Naming - URL Sanitization:**
 

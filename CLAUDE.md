@@ -291,6 +291,12 @@ When a user asks about accomplishments:
 
 The morning greeting includes checking for FedRAMP Rev 5 documentation changes. FedRAMP monitoring data is stored locally in the `fedramp/` directory.
 
+**CRITICAL UPDATE (April 2026):** The fr_scraper system has been upgraded with full content capture and improved change detection:
+- **Complete Content**: Snapshots now save FULL markdown content (every word, every paragraph) - not summaries
+- **Granular Detection**: Captures minor text edits, wording changes, and subtle content modifications
+- **Consistent Format**: All documentation files (CLAUDE.md, spec.md, .cursorrules) now aligned
+- **Better Reports**: More specific change detection (exact wording changes, not just "page updated")
+
 ### When to Run FedRAMP Check
 
 **ALWAYS run the FedRAMP check when the user says:**
@@ -313,10 +319,32 @@ Read these files for complete workflow instructions:
 - fedramp/spec.md (complete operational guidelines)
 
 Execute the change detection workflow as specified in those files.
-Report: time since last check, pages added/removed, content changes, new notices.
+Report: time since last check, pages added/removed, specific wording changes, content additions/deletions, new notices.
 ```
 
 **Why background execution:** Crawling 40-50+ pages takes time; user can review todos while check runs.
+
+### What to Expect from Change Reports
+
+The upgraded fr_scraper system provides more detailed change detection:
+
+**✅ Now Detected:**
+- Minor text edits and wording changes (e.g., "shall" → "must")
+- New paragraphs or sentences added to existing sections
+- Removed content (deleted paragraphs, sections)
+- New pages added at any depth under /docs/rev5/
+- Removed/deleted pages
+- New FedRAMP public notices
+
+**📊 Report Format:**
+- "Changes since [date/time] ([X days] ago)"
+- Specific pages that changed with exact modifications
+- List of new pages with URLs
+- List of removed pages
+- Content additions/deletions with context
+- New notices with IDs and dates
+
+**Note:** The system uses WebFetch with prompt "Extract all content from the main documentation area as markdown" to capture complete page content, ensuring no changes are missed.
 
 ## On-Demand FedRAMP Documentation Queries
 

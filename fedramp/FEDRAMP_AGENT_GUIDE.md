@@ -33,6 +33,12 @@ This project monitors TWO FedRAMP websites for changes:
 1. **https://www.fedramp.gov/docs/rev5/** (Rev5 Documentation - 40-50+ pages)
 2. **https://www.fedramp.gov/notices/** (Public Notices - single page)
 
+**🚨 CRITICAL UPDATE (April 2026): FULL CONTENT CAPTURE**
+- Snapshots now save COMPLETE markdown content (every word, every paragraph)
+- NOT summaries - FULL page content captured via WebFetch
+- Enables detection of minor text edits, wording changes, content additions/deletions
+- Files named `.html` but contain full markdown text for consistent comparison
+
 ## When User Asks About Changes
 
 When the user asks ANY variation of "what has changed?" or "check for changes":
@@ -55,8 +61,10 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
 4. **Crawl BOTH websites COMPLETELY**:
    - **Rev5 Docs**: Start at https://www.fedramp.gov/docs/rev5/
      - Extract all links under `/docs/rev5/`
-     - Fetch EVERY page (40-50+ pages)
-     - Save each page as `.html` file in snapshot directory
+     - Fetch EVERY page (40-50+ pages) using WebFetch
+     - **CRITICAL**: Use prompt "Extract all content from the main documentation area as markdown"
+     - Save COMPLETE markdown content (not summaries) as `.html` files in snapshot directory
+     - Files are `.html` extension but contain full markdown text
    - **Notices**: Fetch https://www.fedramp.gov/notices/
      - Extract all notice entries
      - Include in `_meta.json`
@@ -74,11 +82,17 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
    - Set page/notice counts
    - Set notes describing changes
 
-7. **Report** findings to user:
+7. **Report** findings to user (with improved detail from full content capture):
    - "Changes since [baseline date] ([X days] ago)"
-   - List specific pages that changed
-   - List new notices
+   - List specific pages that changed with EXACT modifications:
+     - Wording changes (e.g., "shall" changed to "must" in section X)
+     - Content additions (new paragraphs, sentences, sections)
+     - Content deletions (removed text, sections)
+   - List new pages added with URLs
+   - List pages removed
+   - List new notices with IDs and dates
    - Be explicit about the temporal gap
+   - **NOTE**: Reports will be more detailed than before due to full content capture
 
 ## What NOT to Do
 
@@ -92,9 +106,11 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
 - Act like today is a different date
 
 **❌ NEVER just compare previously fetched files:**
-- You MUST fetch fresh content from BOTH websites
-- You MUST create a new timestamped snapshot
+- You MUST fetch fresh content from BOTH websites every time
+- You MUST create a new timestamped snapshot with current data
 - You MUST do a complete crawl every time
+- You MUST use WebFetch with "Extract all content from the main documentation area as markdown"
+- You MUST save COMPLETE markdown content (not summaries or excerpts)
 
 ## Critical Rules
 
@@ -124,10 +140,18 @@ Agent:
 2. Reads: snapshots/latest.json → baseline is "2026-04-09T151318Z-update" (April 9th)
 3. Calculates: Today (April 10th) - Baseline (April 9th) = 1 day ago
 4. Creates: snapshots/2026-04-10T161518Z-update/
-5. Crawls: All pages from BOTH websites (fresh fetch from fedramp.gov)
-6. Compares: New snapshot vs April 9th baseline
+5. Crawls: All pages from BOTH websites using WebFetch with "Extract all content from the main documentation area as markdown"
+   - Saves COMPLETE markdown content (not summaries) as .html files
+6. Compares: New snapshot vs April 9th baseline (full content comparison)
 7. Updates: snapshots/latest.json → points to April 10th snapshot
-8. Reports: "Changes since April 9th at 3:13 PM (1 day ago): [changes found]"
+8. Reports: "Changes since April 9th at 3:13 PM (1 day ago):
+   - Modified pages (2):
+     * /playbook/csp/authorization/ssp/ - Changed 'shall' to 'must' in Requirements section, paragraph 3
+     * /balance/ - Added new paragraph describing timeline requirements
+   - New pages (1): /playbook/csp/continuous-monitoring/automation/
+   - Removed pages: None
+   - New notices: Notice 0010 published April 10th
+   Total: 47 pages monitored, 2 modified, 1 added"
 ```
 
 ## Example WRONG Workflow (Don't Do This)
@@ -156,13 +180,17 @@ Agent:
 1. ✅ Check current date
 2. ✅ Read spec.md and latest.json
 3. ✅ Create NEW snapshot with CURRENT timestamp
-4. ✅ Fetch fresh content from BOTH websites
-5. ✅ Compare new vs baseline
+4. ✅ Fetch fresh COMPLETE content from BOTH websites
+   - Use WebFetch prompt: "Extract all content from the main documentation area as markdown"
+   - Save FULL markdown content (not summaries)
+5. ✅ Compare new vs baseline (full content comparison detects minor changes)
 6. ✅ Update latest.json
-7. ✅ Report with temporal context
+7. ✅ Report with temporal context and detailed changes
 
 **DO NOT:**
 - ❌ Skip checking current date
 - ❌ Compare old files without new fetch
+- ❌ Save summaries instead of full content
 - ❌ Forget to update latest.json
 - ❌ Report without temporal context
+- ❌ Report vague changes like "page updated" - be specific about what changed
