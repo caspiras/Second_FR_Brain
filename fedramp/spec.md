@@ -3,15 +3,16 @@
 **Targets:**
 1. https://www.fedramp.gov/docs/rev5/ (Rev5 Documentation - 40-50+ pages)
 2. https://www.fedramp.gov/notices/ (Public Notices - single page)
+3. https://www.fedramp.gov/preview/2026/ (2026 Preview Page - single page)
 
-**🚨 CRITICAL: "The Website" = BOTH Sites**
-- When user says "the website" (singular) → Check BOTH sites above
-- When user says "the websites" (plural) → Check BOTH sites above
-- ALWAYS check and report on BOTH sites when asked about changes
-- NEVER omit one site from your report
+**🚨 CRITICAL: "The Website" = ALL THREE Sites**
+- When user says "the website" (singular) → Check ALL THREE sites above
+- When user says "the websites" (plural) → Check ALL THREE sites above
+- ALWAYS check and report on ALL THREE sites when asked about changes
+- NEVER omit any site from your report
 
 **Created:** 2026-03-23
-**Updated:** 2026-04-01 (added notices page)
+**Updated:** 2026-05-07 (added 2026 preview page)
 **Version:** Rev5
 
 ---
@@ -23,16 +24,16 @@
 - You DO NOT need a scheduled script or external monitoring
 - **TRIGGER: When user asks about changes to the website/websites in ANY variation**
   - "What has changed?"
-  - "What has changed on the website?" (singular = check BOTH sites)
-  - "What has changed on the websites?" (plural = check BOTH sites)
+  - "What has changed on the website?" (singular = check ALL THREE sites)
+  - "What has changed on the websites?" (plural = check ALL THREE sites)
   - "Have there been any changes?"
   - "Any updates to the site?"
   - "Has anything changed?"
   - "What's new?"
   - "Any changes to the FedRAMP docs?"
   - **ANY question asking about changes/updates to the website/websites**
-- **ACTION: Immediately crawl BOTH sites (Rev5 docs + notices) and compare to last stored snapshots**
-- **REPORT: Always show results for BOTH sites, never omit one**
+- **ACTION: Immediately crawl ALL THREE sites (Rev5 docs + notices + preview) and compare to last stored snapshots**
+- **REPORT: Always show results for ALL THREE sites, never omit any**
 
 **When user asks about changes (in ANY variation) you MUST NOT:**
 - ❌ Say you can't detect changes automatically
@@ -47,7 +48,8 @@
 - ✅ Start checking NOW - immediately upon seeing the question
 - ✅ Crawl ALL 40-50+ individual pages under /docs/rev5/
 - ✅ Fetch the notices page at /notices/
-- ✅ Compare each page's current content to stored snapshots from last check (BOTH sites)
+- ✅ Fetch the preview page at /preview/2026/
+- ✅ Compare each page's current content to stored snapshots from last check (ALL THREE sites)
 - ✅ The stored snapshots ARE the baseline (in project directory)
 - ✅ Report which specific pages/notices changed and what changed in each
 - ✅ YES, you WILL tell the user about per-page changes when they ask
@@ -263,7 +265,35 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
 ]
 ```
 
-### Step 5: Create Metadata File
+### Step 5: Fetch Preview Page
+
+**URL:** https://www.fedramp.gov/preview/2026/
+
+**Process:**
+
+1. Fetch the preview page HTML with WebFetch
+2. Extract all content using prompt: "Extract all content from the main documentation area as markdown"
+3. Save COMPLETE markdown content (not summary) as `preview__2026.html` in snapshot directory
+4. Capture any metadata:
+   - Page title
+   - Last modified date (if available)
+   - Any announcements or preview items listed
+
+**File Naming:**
+```
+https://www.fedramp.gov/preview/2026/
+→ preview__2026.html
+```
+
+**Content to Save:**
+- **EVERYTHING** - complete page content as markdown
+- All headings and sections
+- All preview announcements or items
+- All links and references
+- All paragraphs (every word)
+- This ensures ALL changes to preview content are detected
+
+### Step 6: Create Metadata File
 
 **File:** `{snapshot_dir}/_meta.json`
 
@@ -276,6 +306,8 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
   "notices_count": 9,
   "notices_latest_id": "0009",
   "notices_latest_date": "2026-03-25",
+  "preview_url": "https://www.fedramp.gov/preview/2026/",
+  "preview_title": "Preview page title from extraction",
   "compared_to": "2026-04-01T170000Z-update",
   "changes_detected": true,
   "notes": "Description of what changed or 'No changes detected'",
@@ -286,7 +318,8 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
   "notices_snapshot": [
     {"id": "0009", "title": "...", "date": "2026-03-25"},
     "... all notices ..."
-  ]
+  ],
+  "preview_snapshot": "Full content saved in preview__2026.html"
 }
 ```
 
@@ -297,13 +330,16 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
 - `notices_count`: Total number of notices found
 - `notices_latest_id`: Most recent notice ID
 - `notices_latest_date`: Date of most recent notice
+- `preview_url`: URL of the preview page monitored
+- `preview_title`: Title extracted from the preview page
 - `compared_to`: Previous snapshot directory name (null for first run)
 - `changes_detected`: true/false based on comparison
 - `notes`: Human-readable summary
 - `urls`: Complete array of all crawled Rev5 URLs
 - `notices_snapshot`: Complete array of all notices with metadata
+- `preview_snapshot`: Reference to preview page content file
 
-### Step 6: Update Latest Pointer
+### Step 7: Update Latest Pointer
 
 **🚨 CRITICAL: ALWAYS UPDATE THIS FILE AFTER CREATING A SNAPSHOT**
 
@@ -317,15 +353,15 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
   "checked_at": "2026-04-08T13:09:22Z",
   "page_count": 36,
   "notices_count": 9,
-  "scope": "https://www.fedramp.gov/docs/rev5/ (excluding /docs/20x/) + https://www.fedramp.gov/notices/",
+  "scope": "https://www.fedramp.gov/docs/rev5/ (excluding /docs/20x/) + https://www.fedramp.gov/notices/ + https://www.fedramp.gov/preview/2026/",
   "notes": "Summary of latest check results"
 }
 ```
 
 **When to update:**
 - Immediately after creating a new snapshot
-- After completing Step 5 (Create Metadata File)
-- Before Step 7 (Verify Snapshot Completeness)
+- After completing Step 6 (Create Metadata File)
+- Before Step 8 (Verify Snapshot Completeness)
 
 **What to update:**
 - `baseline_directory`: Set to the NEW snapshot directory name you just created
@@ -342,23 +378,26 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
 5. **IMMEDIATELY UPDATE `latest.json`** to point to `2026-04-08T130922Z-update`
 6. Next time user asks, the baseline will be `2026-04-08T130922Z-update` (correct!)
 
-### Step 7: Verify Snapshot Completeness
+### Step 8: Verify Snapshot Completeness
 
 **A valid snapshot MUST contain:**
 
 ✅ `_meta.json` file
 ✅ 36+ `.html` files (one per Rev5 doc page)
+✅ `preview__2026.html` file (preview page content)
 ✅ All fields populated in `_meta.json`
 ✅ `notices_snapshot` array with all current notices
+✅ `preview_snapshot` field referencing preview content
 ✅ `urls` array matching the count in `page_count`
 
 **Invalid snapshot (DO NOT CREATE):**
 ❌ Only `_meta.json` without content files
 ❌ Missing `_meta.json`
+❌ Missing preview page content file
 ❌ Partial page coverage (e.g., only 10 pages when 36 exist)
 ❌ Empty or null critical fields in metadata
 
-### Step 8: Compare to Previous Snapshot (If Exists)
+### Step 9: Compare to Previous Snapshot (If Exists)
 
 **🚨 BEFORE COMPARING - VERIFY TEMPORAL LOGIC:**
 
@@ -387,7 +426,8 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
 - **New URLs:** URLs in current not in previous `urls` array
 - **Removed URLs:** URLs in previous not in current
 - **Notice changes:** New notices (compare `notices_latest_id`)
-- **Content changes:** For each .html file, compare text content
+- **Preview page changes:** Compare `preview__2026.html` content to previous snapshot
+- **Content changes:** For each .html file (including preview), compare text content
 
 **Update NEW snapshot's `_meta.json`:**
 - Set `compared_to` to previous snapshot directory name (from `latest.json`)
@@ -399,7 +439,7 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
 - "Last check was [X days/hours] ago"
 - NOT "Changes since yesterday" if last check was 2 days ago
 
-### Step 9: Report Results to User
+### Step 10: Report Results to User
 
 **Format:**
 ```markdown
@@ -419,11 +459,16 @@ https://www.fedramp.gov/docs/rev5/playbook/csp/authorization/ssp/
 - Latest notice: 0009 (2026-03-25)
 - New notices: [count and list]
 
+### Preview Page (2026)
+- URL: https://www.fedramp.gov/preview/2026/
+- Changes since last check: [Yes/No]
+- Content modifications: [description of changes if any]
+
 ### Summary
 [Brief description of changes or "No changes detected since [date]"]
 ```
 
-### Step 10: Commit to Git (Optional)
+### Step 11: Commit to Git (Optional)
 
 ```bash
 git add snapshots/
@@ -586,7 +631,7 @@ Agent:
    - Any variation asking about website changes
 
 2. **Agent creates NEW snapshot:**
-   - Crawls BOTH sites (Rev5 docs + notices)
+   - Crawls ALL THREE sites (Rev5 docs + notices + preview)
    - Saves all content files + metadata
    - Creates timestamped snapshot directory
 
@@ -628,14 +673,15 @@ Agent:
 - You WILL detect and report per-page changes when user asks
 
 **When user asks "What has changed?" you MUST:**
-1. Recognize this as your TRIGGER to start checking BOTH sites
+1. Recognize this as your TRIGGER to start checking ALL THREE sites
 2. Crawl ALL 40-50+ pages individually under https://www.fedramp.gov/docs/rev5/
 3. Fetch the notices page at https://www.fedramp.gov/notices/
-4. Fetch current content from EVERY Rev5 doc page (not just one changelog page)
-5. Load stored snapshots from **the most recent snapshot only** (see "SNAPSHOT BASELINE (DEFAULT)" above), or note this is first check
-6. Compare each page's content vs. that baseline (**not** older snapshot directories unless the user asked for a specific date/baseline)
-7. Report which pages/notices changed since the last check and what changed in each
-8. Store new snapshots with timestamp for next comparison (both sites)
+4. Fetch the preview page at https://www.fedramp.gov/preview/2026/
+5. Fetch current content from EVERY Rev5 doc page (not just one changelog page)
+6. Load stored snapshots from **the most recent snapshot only** (see "SNAPSHOT BASELINE (DEFAULT)" above), or note this is first check
+7. Compare each page's content vs. that baseline (**not** older snapshot directories unless the user asked for a specific date/baseline)
+8. Report which pages/notices/preview changed since the last check and what changed in each
+9. Store new snapshots with timestamp for next comparison (all three sites)
 
 **TEMPORAL TRACKING:**
 - **First time user asks:** Establish baseline by crawling all pages, store snapshots, report "First check - baseline established"

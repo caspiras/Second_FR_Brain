@@ -291,11 +291,17 @@ When a user asks about accomplishments:
 
 The morning greeting includes checking for FedRAMP Rev 5 documentation changes. FedRAMP monitoring data is stored locally in the `fedramp/` directory.
 
-**CRITICAL UPDATE (April 2026):** The fr_scraper system has been upgraded with full content capture and improved change detection:
+**Sites Monitored:**
+1. https://www.fedramp.gov/docs/rev5/ (Rev5 Documentation - 40-50+ pages)
+2. https://www.fedramp.gov/notices/ (Public Notices - single page)
+3. https://www.fedramp.gov/preview/2026/ (2026 Preview Page - single page)
+
+**CRITICAL UPDATE (May 2026):** The fr_scraper system has been upgraded with full content capture and improved change detection:
 - **Complete Content**: Snapshots now save FULL markdown content (every word, every paragraph) - not summaries
 - **Granular Detection**: Captures minor text edits, wording changes, and subtle content modifications
 - **Consistent Format**: All documentation files (CLAUDE.md, spec.md, .cursorrules) now aligned
 - **Better Reports**: More specific change detection (exact wording changes, not just "page updated")
+- **Three Sites**: Now monitors Rev5 docs, notices, AND the 2026 preview page
 
 ### When to Run FedRAMP Check
 
@@ -322,7 +328,7 @@ Execute the change detection workflow as specified in those files.
 Report: time since last check, pages added/removed, specific wording changes, content additions/deletions, new notices.
 ```
 
-**Why background execution:** Crawling 40-50+ pages takes time; user can review todos while check runs.
+**Why background execution:** Crawling 40-50+ pages across three sites takes time; user can review todos while check runs.
 
 ### What to Expect from Change Reports
 
@@ -335,6 +341,7 @@ The upgraded fr_scraper system provides more detailed change detection:
 - New pages added at any depth under /docs/rev5/
 - Removed/deleted pages
 - New FedRAMP public notices
+- Changes to the 2026 preview page
 
 **📊 Report Format:**
 - "Changes since [date/time] ([X days] ago)"
@@ -343,6 +350,7 @@ The upgraded fr_scraper system provides more detailed change detection:
 - List of removed pages
 - Content additions/deletions with context
 - New notices with IDs and dates
+- Preview page changes (if any)
 
 **Note:** The system uses WebFetch with prompt "Extract all content from the main documentation area as markdown" to capture complete page content, ensuring no changes are missed.
 

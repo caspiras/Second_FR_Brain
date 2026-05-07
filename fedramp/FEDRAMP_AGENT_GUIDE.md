@@ -29,9 +29,10 @@
 
 ## What This Project Does
 
-This project monitors TWO FedRAMP websites for changes:
+This project monitors THREE FedRAMP websites for changes:
 1. **https://www.fedramp.gov/docs/rev5/** (Rev5 Documentation - 40-50+ pages)
 2. **https://www.fedramp.gov/notices/** (Public Notices - single page)
+3. **https://www.fedramp.gov/preview/2026/** (2026 Preview Page - single page)
 
 **🚨 CRITICAL UPDATE (April 2026): FULL CONTENT CAPTURE**
 - Snapshots now save COMPLETE markdown content (every word, every paragraph)
@@ -58,7 +59,7 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
    - Directory: `snapshots/YYYY-MM-DDTHHMMSSZ-update/`
    - Use the timestamp from step 1
 
-4. **Crawl BOTH websites COMPLETELY**:
+4. **Crawl ALL THREE websites COMPLETELY**:
    - **Rev5 Docs**: Start at https://www.fedramp.gov/docs/rev5/
      - Extract all links under `/docs/rev5/`
      - Fetch EVERY page (40-50+ pages) using WebFetch
@@ -68,6 +69,10 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
    - **Notices**: Fetch https://www.fedramp.gov/notices/
      - Extract all notice entries
      - Include in `_meta.json`
+   - **Preview**: Fetch https://www.fedramp.gov/preview/2026/
+     - Use prompt "Extract all content from the main documentation area as markdown"
+     - Save COMPLETE markdown content as `preview__2026.html` in snapshot directory
+     - Include metadata in `_meta.json` (preview_url, preview_title, preview_snapshot)
 
 5. **Compare** new snapshot vs baseline snapshot:
    - Page count changes
@@ -75,6 +80,7 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
    - Pages removed
    - Content changes in existing pages
    - New notices added
+   - Preview page content changes
 
 6. **Update** `snapshots/latest.json`:
    - Set `baseline_directory` to your NEW snapshot
@@ -91,6 +97,7 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
    - List new pages added with URLs
    - List pages removed
    - List new notices with IDs and dates
+   - Report preview page changes (if any)
    - Be explicit about the temporal gap
    - **NOTE**: Reports will be more detailed than before due to full content capture
 
@@ -106,7 +113,7 @@ When the user asks ANY variation of "what has changed?" or "check for changes":
 - Act like today is a different date
 
 **❌ NEVER just compare previously fetched files:**
-- You MUST fetch fresh content from BOTH websites every time
+- You MUST fetch fresh content from ALL THREE websites every time
 - You MUST create a new timestamped snapshot with current data
 - You MUST do a complete crawl every time
 - You MUST use WebFetch with "Extract all content from the main documentation area as markdown"
@@ -120,9 +127,10 @@ Always run `date -u` before doing anything. Know what day TODAY is.
 ### Rule 2: Create NEW Snapshot Every Time
 Never compare old snapshots without creating a new one with current data.
 
-### Rule 3: Crawl BOTH Websites Completely
+### Rule 3: Crawl ALL THREE Websites Completely
 - ALL pages under /docs/rev5/ (40-50+ pages)
 - The /notices/ page
+- The /preview/2026/ page
 
 ### Rule 4: Update latest.json Every Time
 After creating a new snapshot, ALWAYS update `snapshots/latest.json` to point to it.
@@ -140,7 +148,7 @@ Agent:
 2. Reads: snapshots/latest.json → baseline is "2026-04-09T151318Z-update" (April 9th)
 3. Calculates: Today (April 10th) - Baseline (April 9th) = 1 day ago
 4. Creates: snapshots/2026-04-10T161518Z-update/
-5. Crawls: All pages from BOTH websites using WebFetch with "Extract all content from the main documentation area as markdown"
+5. Crawls: All pages from ALL THREE websites using WebFetch with "Extract all content from the main documentation area as markdown"
    - Saves COMPLETE markdown content (not summaries) as .html files
 6. Compares: New snapshot vs April 9th baseline (full content comparison)
 7. Updates: snapshots/latest.json → points to April 10th snapshot
@@ -151,6 +159,7 @@ Agent:
    - New pages (1): /playbook/csp/continuous-monitoring/automation/
    - Removed pages: None
    - New notices: Notice 0010 published April 10th
+   - Preview page: No changes detected
    Total: 47 pages monitored, 2 modified, 1 added"
 ```
 
@@ -180,7 +189,7 @@ Agent:
 1. ✅ Check current date
 2. ✅ Read spec.md and latest.json
 3. ✅ Create NEW snapshot with CURRENT timestamp
-4. ✅ Fetch fresh COMPLETE content from BOTH websites
+4. ✅ Fetch fresh COMPLETE content from ALL THREE websites
    - Use WebFetch prompt: "Extract all content from the main documentation area as markdown"
    - Save FULL markdown content (not summaries)
 5. ✅ Compare new vs baseline (full content comparison detects minor changes)
